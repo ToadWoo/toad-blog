@@ -19,19 +19,19 @@
             </div>
           </div>
         <% } else if (page.type === 'categories') { %>
-          <div id="categories">
-            <div class="category-list-title">
-                <% var visibleCategories = 0 %>
-                <% site.categories.each(function(cat){ %>
-                  <% if (cat.length) { %>
-                    <% visibleCategories += 1 %>
-                  <% } %>
-                <% }) %>
-                <%- _p('counter.categories', visibleCategories) %>
-            </div>
-            <div class="category-list">
-              <%- list_categories() %>
-            </div>
+          <div id="archive">
+              <% site.categories.filter(i=>!i.parent).each(function(cat){ %>
+                <% if (cat.length) { %>
+                  <ul class="post-list">
+                    <li class="post-year"><h2><%= cat.name %></h2></li>
+                    <% cat.posts.each(function(post){ %>
+                      <li class="post-item">
+                        <span><%- partial('_partial/post/title', { post: post, index: true, class_name: '' }) %></span>
+                      </li>
+                    <% }) %>
+                  </ul>
+                <% } %>
+              <% }) %>           
           </div>
         <% } else { %>
           <%- page.content %>
