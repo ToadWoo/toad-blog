@@ -309,7 +309,7 @@
   padding-left: 4rem;
 }
 .py4 {
-  padding-top: 4rem;
+  padding-top: 3rem;
   padding-bottom: 4rem;
 }
 .px4 {
@@ -551,7 +551,7 @@ body {
   }
 }
 .max-width {
-  max-width: 48rem;
+  max-width: 50rem;
 }
 @media (max-width: 480px) {
   .px3 {
@@ -659,15 +659,19 @@ body {
   #header #nav ul a:hover {
     background: none;
   }
+  #header #nav ul a {
+    margin: 0;
+  }
   #header #nav ul li {
     display: none;
     border-right: 0;
   }
   #header #nav ul li.icon {
     position: absolute;
-    top: 77px;
-    right: 1rem;
+    top: 60px;
+    right: 0.5rem;
     display: inline-block;
+    margin: 0;
   }
   #header #nav ul.responsive li {
     display: block;
@@ -1236,7 +1240,7 @@ article .content .caption {
 }
 #footer {
   position: absolute;
-  bottom: 0;
+  bottom: env(safe-area-inset-bottom);
   margin-bottom: 10px;
   width: 100%;
   color: #666;

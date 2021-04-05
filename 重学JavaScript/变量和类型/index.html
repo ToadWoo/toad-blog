@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
+    <meta name="description" content="类型JavaScript 最新版本目前规定了 8 种数据类型 原始类型（7 种）：Undefined Null Boolean String Number Symbol(ES6) Bigint(ES11) 引用类型（1 种）： Object UndefinedUndefined  类型表示未定义，它的值就是undefined, 任何变量在赋值之前都是undefined . JS 中 undefin">
+<meta property="og:type" content="article">
+<meta property="og:title" content="重学JavaScript - 变量和类型">
+<meta property="og:url" content="https://toad.dev/%E9%87%8D%E5%AD%A6JavaScript/%E5%8F%98%E9%87%8F%E5%92%8C%E7%B1%BB%E5%9E%8B/index.html">
+<meta property="og:site_name" content="Toad.Woo">
+<meta property="og:description" content="类型JavaScript 最新版本目前规定了 8 种数据类型 原始类型（7 种）：Undefined Null Boolean String Number Symbol(ES6) Bigint(ES11) 引用类型（1 种）： Object UndefinedUndefined  类型表示未定义，它的值就是undefined, 任何变量在赋值之前都是undefined . JS 中 undefin">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-03-10T23:22:58.000Z">
+<meta property="article:modified_time" content="2021-04-05T18:15:45.869Z">
+<meta property="article:author" content="Toad">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Toad.Woo - 重学JavaScript - 变量和类型</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" "Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/categories/">分类</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="http://github.com/ToadWoo">Github</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇 " href="/%E9%87%8D%E5%AD%A6JavaScript/%E5%8E%9F%E5%9E%8B%E5%92%8C%E5%8E%9F%E5%9E%8B%E9%93%BE/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="返回顶部 " href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+    </span>
+    <br/>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.</span> <span class="toc-text">类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Undefined"><span class="toc-number">1.1.</span> <span class="toc-text">Undefined</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Null"><span class="toc-number">1.2.</span> <span class="toc-text">Null</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Boolean"><span class="toc-number">1.3.</span> <span class="toc-text">Boolean</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#String"><span class="toc-number">1.4.</span> <span class="toc-text">String</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Number"><span class="toc-number">1.5.</span> <span class="toc-text">Number</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Symbol"><span class="toc-number">1.6.</span> <span class="toc-text">Symbol</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#BigInt"><span class="toc-number">1.7.</span> <span class="toc-text">BigInt</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Object"><span class="toc-number">1.8.</span> <span class="toc-text">Object</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2"><span class="toc-number">2.</span> <span class="toc-text">类型转换</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#StringToNumber"><span class="toc-number">2.1.</span> <span class="toc-text">StringToNumber</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NumberToString"><span class="toc-number">2.2.</span> <span class="toc-text">NumberToString</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A3%85%E7%AE%B1%E8%BD%AC%E6%8D%A2"><span class="toc-number">2.3.</span> <span class="toc-text">装箱转换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8B%86%E7%AE%B1%E8%BD%AC%E6%8D%A2"><span class="toc-number">2.4.</span> <span class="toc-text">拆箱转换</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#typeof-amp-instanceof"><span class="toc-number">3.</span> <span class="toc-text">typeof &amp; instanceof</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        重学JavaScript - 变量和类型
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Toad</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2021-03-10T23:22:58.000Z" itemprop="datePublished">2021-03-10</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E9%87%8D%E5%AD%A6JavaScript/">重学JavaScript</a>
+    </div>
+
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="类型"><a href="#类型" class="headerlink" title="类型"></a>类型</h2><p>JavaScript 最新版本目前规定了 8 种数据类型</p>
+<p>原始类型（7 种）：<code>Undefined</code> <code>Null</code> <code>Boolean</code> <code>String</code> <code>Number</code> <code>Symbol</code>(ES6) <code>Bigint</code>(ES11)</p>
+<p>引用类型（1 种）： <code>Object</code></p>
+<h3 id="Undefined"><a href="#Undefined" class="headerlink" title="Undefined"></a>Undefined</h3><p><code>Undefined </code> 类型表示未定义，它的值就是<code>undefined</code>, 任何变量在赋值之前都是<code>undefined</code> . JS 中 <code>undefined</code> 并非一个关键字而是一个变量，所以<code>undefined</code>变量是可能被修改的有些编程规范会要求用<code>void 0</code> 来代替 <code>undefined</code>,保证获取到的值一定是<code>undefined</code></p>
+<h3 id="Null"><a href="#Null" class="headerlink" title="Null"></a>Null</h3><p><code>Null</code>类型是一个关键字,它的值就是<code>null</code> ，表示定义了但是为空</p>
+<h3 id="Boolean"><a href="#Boolean" class="headerlink" title="Boolean"></a>Boolean</h3><p><code>Boolean</code>有两个值 <code>true</code>和<code>false</code>， 表示逻辑意义上的真和假</p>
+<h3 id="String"><a href="#String" class="headerlink" title="String"></a>String</h3><p>字符串是不可变的，且是有最大长度的，最大长度为<code>2^53 -1</code>,但是这度并非字符数，而是 UTF16 为单元的长度</p>
+<p>相关知识点：<a target="_blank" rel="noopener" href="http://www.ruanyifeng.com/blog/2007/10/ascii_unicode_and_utf-8.html">Unicode、ASCII、UTF8、UTF16</a></p>
+<h3 id="Number"><a href="#Number" class="headerlink" title="Number"></a>Number</h3><p><code>Number</code> 类型 IEEE754 格式表示整数和浮点数(双精度值)，在这个规范中能安全表示数字的范围在<code>-(2^53 - 1) ~ 2^53 - 1</code>， 即<code>Number.MAX_SAFE_INTEGER ~ Number.MIN_SAFE_INTEGER</code>之间，它的值除了数字以外还有<code>NaN</code>、<code>Infinity</code>、<code>-Infinity</code>，<code>NaN</code>表示 not a number， <code>Infinity</code>表示正无穷，<code>-Infinity</code>表示负无穷。可以使用<code>isFinite</code>函数判断数字是否是非无穷的，另外 JS 中有<code>+0</code>和<code>-0</code>区分，<code>1/-0</code>结果是<code>-Infinity</code>, <code>1/0</code>结果是<code>Infinity</code>。因为浮点是有精度的,最高可达 17 位，所以非整数的 Number 类型是无法用==或者=== 来比较的，这就是为什么 0.1+0.2 不能=0.3。正确浮点数比较方式应该是</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Math</span>.abs(<span class="number">0.1</span> + <span class="number">0.2</span> - <span class="number">0.3</span>) &lt;= <span class="built_in">Number</span>.EPSILON;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Symbol"><a href="#Symbol" class="headerlink" title="Symbol"></a>Symbol</h3><p>Symbol 是 ES6 引入的新类型，它的实例是唯一且不可变的，它的用途就是用来确保对象属性使用唯一的标识符</p>
+<p>常见的 API：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建Symbol</span></span><br><span class="line"><span class="keyword">var</span> mySymbol = <span class="built_in">Symbol</span>(<span class="string">&quot;foo&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 全局符号注册</span></span><br><span class="line"><span class="keyword">var</span> globalSymbol = <span class="built_in">Symbol</span>.for(<span class="string">&quot;foo&quot;</span>); <span class="comment">// 如果该字符串已在全局注册就会返回之前创建的Symbol，否则会创建一个Symbol；</span></span><br><span class="line"><span class="keyword">var</span> globalSymbol2 = <span class="built_in">Symbol</span>.for(<span class="string">&quot;foo&quot;</span>);</span><br><span class="line"><span class="built_in">console</span>.log(globalSymbol === globalSymbol2); <span class="comment">// &gt;&gt; true</span></span><br><span class="line"><span class="built_in">console</span>.log(mySymbol === globalSymbol); <span class="comment">// &gt;&gt; false</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 查询Symbol全局注册表</span></span><br><span class="line"><span class="keyword">var</span> key = <span class="built_in">Symbol</span>.keyFor(globalSymbol); <span class="comment">// &gt;&gt; &#x27;foo&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Symbol.iterator</span></span><br><span class="line"><span class="comment">// 我们可以重写或者自定义对象上的 Symbol.iterator属性，来自定义for...of行为</span></span><br><span class="line"><span class="keyword">var</span> o = <span class="keyword">new</span> <span class="built_in">Object</span>();</span><br><span class="line">o[<span class="built_in">Symbol</span>.iterator] = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> v = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    next: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> &#123; <span class="attr">value</span>: v++, done: v &gt; <span class="number">10</span> &#125;;</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> v <span class="keyword">of</span> o) &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(v); <span class="comment">// &gt;&gt; 0 1 2 3 ... 9</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Symbol.toPrimitive 该方法将对象转换为相应的原始类型</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="BigInt"><a href="#BigInt" class="headerlink" title="BigInt"></a>BigInt</h3><p>BigInt 是 ES11 新增的类型， 用来操作超大最大安全数的数</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建Bigint</span></span><br><span class="line"><span class="keyword">const</span> a = <span class="number">100n</span>;</span><br><span class="line"><span class="keyword">const</span> b = <span class="built_in">BigInt</span>(<span class="number">100</span>);</span><br></pre></td></tr></table></figure>
+
+<h3 id="Object"><a href="#Object" class="headerlink" title="Object"></a>Object</h3><p>对象其实就是一组数据和功能的集合，对象通过 new 操作符后面跟对象类型名称来创建，如：<code> new Object()</code></p>
+<p>Number、String、Boolean 三个构造器是两用的，当跟 new 搭配时，他们产生对象，当直接调用表示强制类型转换</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> n = <span class="keyword">new</span> <span class="built_in">Number</span>(<span class="number">1</span>);</span><br><span class="line"><span class="built_in">console</span>.log(n <span class="keyword">instanceof</span> <span class="built_in">Object</span>); <span class="comment">// &gt;&gt; true</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Number</span>(<span class="number">1</span>)); <span class="comment">// &gt;&gt; 1</span></span><br></pre></td></tr></table></figure>
+
+<p>为什么对象的方法可以在原始类型上使用？</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="string">&quot;abc&quot;</span>.charAt(<span class="number">0</span>)); <span class="comment">// &gt;&gt; &#x27;a&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>因为<code>.</code>运算符提供了装箱操作，它会根据基础类型构造一个临时对象，使得我们能在基础类型上调用对应对象的方法。</p>
+<h2 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h2><p>大多数的类型转换是符合人类的直觉的，比如 null 转 boolean 值就是 false， 转 number 就是 0，但是有些转换还是比较复杂的</p>
+<h3 id="StringToNumber"><a href="#StringToNumber" class="headerlink" title="StringToNumber"></a>StringToNumber</h3><p>使用 <code>parserInt</code> <code>parserFloat</code> <code>Number</code> 进行转换，<code>Number</code>是比较好的选择,</p>
+<p><code>parserInt</code> 建议要传第二个参数</p>
+<h3 id="NumberToString"><a href="#NumberToString" class="headerlink" title="NumberToString"></a>NumberToString</h3><p>较大的数会被转成科学计数法的形式</p>
+<h3 id="装箱转换"><a href="#装箱转换" class="headerlink" title="装箱转换"></a>装箱转换</h3><p>原始类型到对象会进行一个装箱转换</p>
+<h3 id="拆箱转换"><a href="#拆箱转换" class="headerlink" title="拆箱转换"></a>拆箱转换</h3><p>对象类型到原始类型即为拆箱</p>
+<p>先调用 valueof 然后调用 toString 来获取原始类型，String 类型的拆箱则会优先调用 toString， 你也可以指定<code>Symbol.toPrimitive</code>来覆盖原有行为</p>
+<h2 id="typeof-amp-instanceof"><a href="#typeof-amp-instanceof" class="headerlink" title="typeof &amp; instanceof"></a>typeof &amp; instanceof</h2><p><code>typeof</code> 大多数结果都很运行时类型行为是一致，例外：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typeof</span> <span class="literal">null</span>; <span class="comment">// &gt;&gt; &#x27;object&#x27;</span></span><br><span class="line"><span class="keyword">typeof</span> <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;&#125;; <span class="comment">// &gt;&gt; &#x27;function&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>instanceof</code> 是沿着原型链向上找, 你也可以指定 <code>Symbol.hasInstance</code> 来覆盖原有行为</p>
+<p><code>Object.prototype.toString</code> 是可以更准确的识别对象对应的基本类型的方法</p>
+
+  </div>
+</article>
+
+
+
+      
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2019-2021
+    Toad
+  </div>
+  
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
