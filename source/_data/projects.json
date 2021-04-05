@@ -24,9 +24,9 @@
       "url":"https://github.com/ToadWoo/js-algorithm-note",
       "desc":"带你使用JS学习数据结构与算法，轻松搞定面试算法题，有针对性地练习各种类型中常考的题目帮助你快速掌握数据结构与算法"
    },
-    {
-        "name":"Bookbox",
-        "url":"https://bookbox.toad.dev",
-        "desc":"一款JMU学校图书馆搜索借阅的微信小程序"
-     }
+   {
+      "name":"Bookbox",
+      "url":"https://toadwoo.github.io/bookbox-website/",
+      "desc":"一款JMU学校图书馆搜索借阅的微信小程序"
+   } 
 ]
