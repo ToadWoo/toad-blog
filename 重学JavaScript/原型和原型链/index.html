@@ -13,13 +13,13 @@
 <meta property="og:site_name" content="Toad.Woo">
 <meta property="og:description" content="JS 是一门基于原型的面向对象语言，虽然有 ES6 就有了 class，但实际上还是基于原型来实现面向对象的，class 只是一个语法糖。ca 12345class A &amp;#123;&amp;#125;typeof A; &#x2F;&#x2F; &gt;&gt; &amp;#x27;function&amp;#x27;&#x2F;&#x2F; 说明类的本质还是function  [[Prototype]]每个对象都有一个隐藏的属性 [[Prototype]]">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://toad.dev/%E9%87%8D%E5%AD%A6JavaScript/resource/prototype.png">
-<meta property="og:image" content="https://toad.dev/%E9%87%8D%E5%AD%A6JavaScript/resource/__proto.png">
+<meta property="og:image" content="https://toad.dev/%E9%87%8D%E5%AD%A6JavaScript/resource/proto2.png">
+<meta property="og:image" content="https://toad.dev/%E9%87%8D%E5%AD%A6JavaScript/resource/proto1.png">
 <meta property="article:published_time" content="2021-03-15T23:23:35.000Z">
-<meta property="article:modified_time" content="2021-04-05T18:15:45.869Z">
+<meta property="article:modified_time" content="2021-04-05T18:36:06.617Z">
 <meta property="article:author" content="Toad">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://toad.dev/%E9%87%8D%E5%AD%A6JavaScript/resource/prototype.png">
+<meta name="twitter:image" content="https://toad.dev/%E9%87%8D%E5%AD%A6JavaScript/resource/proto2.png">
     
     
       
@@ -139,7 +139,7 @@
 <p>[[Prototype]]虽然是隐藏的，但是我们可以通过 <code>__proto__</code> 来设置原型</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> animal = &#123;</span><br><span class="line">  eats: <span class="literal">true</span>,</span><br><span class="line">  <span class="function"><span class="title">walk</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    alert(<span class="string">&quot;Animal walk&quot;</span>);</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> rabbit = &#123;</span><br><span class="line">  jumps: <span class="literal">true</span>,</span><br><span class="line">  __proto__: animal,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> longEar = &#123;</span><br><span class="line">  earLength: <span class="number">10</span>,</span><br><span class="line">  __proto__: rabbit,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
-<p><img src="../resource/prototype.png" alt="prototype"></p>
+<p><img src="../resource/proto2.png" alt="prototype"></p>
 <h3 id="proto"><a href="#proto" class="headerlink" title="proto"></a><em>proto</em></h3><p><strong><em>proto</em> 是 [[Prototype]]的（历史遗留的）getter/setter</strong></p>
 <p>ES6 中开始可以使用 <code>Object.getPrototypeOf</code> 和 <code>Object.setPrototypeOf</code> 来访问和设置原型对象</p>
 <h3 id="prototype"><a href="#prototype" class="headerlink" title="prototype"></a>prototype</h3><p><code>prototype </code>只是函数的一个属性，也是对象，但它并不是原型, 被构造函数创建的实例对象的<code>[[Prototype]]</code>指向构造函数的<code>prototype</code></p>
@@ -148,7 +148,7 @@
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;&#125;;</span><br><span class="line"><span class="keyword">var</span> b = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">//函数才有prototype属性</span></span><br><span class="line"><span class="built_in">console</span>.log(a.prototype); <span class="comment">//&gt;&gt; function()&#123;&#125;</span></span><br><span class="line"><span class="comment">//非函数，没有prototype属性</span></span><br><span class="line"><span class="built_in">console</span>.log(b.prototype); <span class="comment">//&gt;&gt; undefined</span></span><br></pre></td></tr></table></figure>
 
 <p>以上三者的关系：</p>
-<p><img src="../resource/__proto.png" alt="_proto_"></p>
+<p><img src="../resource/proto1.png" alt="_proto_"></p>
 <h3 id="原型链"><a href="#原型链" class="headerlink" title="原型链"></a>原型链</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> animal = &#123;&#125;;</span><br><span class="line"><span class="keyword">let</span> rabbit = &#123;</span><br><span class="line">  __proto__: animal,</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">let</span> longEar = &#123;</span><br><span class="line">  __proto__: rabbit,</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 原型链： longEar —&gt; rabbit -&gt; animal -&gt; Object.prototype -&gt; null</span></span><br></pre></td></tr></table></figure>
 
 <p>longEar 的原型是 rabbit，rabbit 的原型是 animal， animal 的原型是 Object.prototype, Object.prototype 的原型是 null， 原型一级一级网上找，直到 null，这就是所谓的原型链。</p>
