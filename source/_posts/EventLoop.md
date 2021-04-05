@@ -27,7 +27,7 @@ while (queue.waitForMessage()) {
 }
 ```
 
-<img src="../resource/event-loop.png" alt="event-loop" style="zoom:67%;" />
+<img src="../resource/event-loop1.png" alt="event-loop" style="zoom:67%;" />
 
 JS Runtime 运行机制：
 
@@ -50,7 +50,7 @@ JS Runtime 运行机制：
 
 **宿主发起的任务称为宏任务**，例如：setTimout、XMLHttpRequest, 而**JS 引擎发起的任务称为微任务**,例如`Promise`、`MutationObserver`
 
-![macro-micro](../resource/macro-micro.png)
+![macro-micro](../resource/event-loop2.png)
 
 两者关系：
 
