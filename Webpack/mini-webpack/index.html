@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
+    <meta name="description" content="我们知道 webpack 是一个 javascript 的模块打包器，他可以将很多具有依赖关系的文件，打包成 js 文件，使其能在浏览器中运行 Webpack 打包结果分析我们先来看个例子： 12&#x2F;&#x2F; world.jsexport const world &#x3D; &quot;world&quot;;  123&#x2F;&#x2F; message.jsimport &amp;#123; world &amp;#125; from &amp;q">
+<meta property="og:type" content="article">
+<meta property="og:title" content="实现一个不到 100 行的 mini-webpack">
+<meta property="og:url" content="https://toad.dev/Webpack/mini-webpack/index.html">
+<meta property="og:site_name" content="Toad.Woo">
+<meta property="og:description" content="我们知道 webpack 是一个 javascript 的模块打包器，他可以将很多具有依赖关系的文件，打包成 js 文件，使其能在浏览器中运行 Webpack 打包结果分析我们先来看个例子： 12&#x2F;&#x2F; world.jsexport const world &#x3D; &quot;world&quot;;  123&#x2F;&#x2F; message.jsimport &amp;#123; world &amp;#125; from &amp;q">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-04-10T21:10:23.000Z">
+<meta property="article:modified_time" content="2021-04-15T14:24:21.720Z">
+<meta property="article:author" content="Toad">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Toad.Woo - 实现一个不到 100 行的 mini-webpack</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" "Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/categories/">分类</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="http://github.com/ToadWoo">Github</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="下一篇 " href="/%E9%87%8D%E5%AD%A6JavaScript/this%E6%8C%87%E5%90%91/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部 " href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+    </span>
+    <br/>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Webpack-%E6%89%93%E5%8C%85%E7%BB%93%E6%9E%9C%E5%88%86%E6%9E%90"><span class="toc-number">1.</span> <span class="toc-text">Webpack 打包结果分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E6%96%87%E4%BB%B6%E4%B8%AD%E7%9A%84%E4%BE%9D%E8%B5%96%E6%A8%A1%E5%9D%97%E5%92%8C%E4%BB%A3%E7%A0%81%E8%BD%AC%E6%8D%A2"><span class="toc-number">2.</span> <span class="toc-text">获取文件中的依赖模块和代码转换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%92%E5%BD%92%E9%81%8D%E5%8E%86%E7%94%9F%E6%88%90%E4%BE%9D%E8%B5%96%E5%9B%BE"><span class="toc-number">3.</span> <span class="toc-text">递归遍历生成依赖图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#require-%E5%87%BD%E6%95%B0"><span class="toc-number">4.</span> <span class="toc-text">require 函数</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        实现一个不到 100 行的 mini-webpack
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Toad</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2021-04-10T21:10:23.000Z" itemprop="datePublished">2021-04-10</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/Webpack/">Webpack</a>
+    </div>
+
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>我们知道 webpack 是一个 javascript 的模块打包器，他可以将很多具有依赖关系的文件，打包成 js 文件，使其能在浏览器中运行</p>
+<h3 id="Webpack-打包结果分析"><a href="#Webpack-打包结果分析" class="headerlink" title="Webpack 打包结果分析"></a>Webpack 打包结果分析</h3><p>我们先来看个例子：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// world.js</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> world = <span class="string">&quot;world&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// message.js</span></span><br><span class="line"><span class="keyword">import</span> &#123; world &#125; <span class="keyword">from</span> <span class="string">&quot;./world.js&quot;</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> message = <span class="string">`hello <span class="subst">$&#123;world&#125;</span>`</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// index.js</span></span><br><span class="line"><span class="keyword">import</span> &#123; message &#125; <span class="keyword">from</span> <span class="string">&quot;./message.js&quot;</span>;</span><br><span class="line"><span class="built_in">console</span>.log(message);</span><br></pre></td></tr></table></figure>
+
+<p>有三个 js 文件，我们使用 webpack 先来打包一下，得到的结果大致是这样的一个立即执行函数，里面自定义一个<code>__webpack_require__</code>方法，使得我们的模块化在浏览器中能够正常运行，除此之外还有<code>__webpack_modules__</code> 里面存储了包括入口文件之外依赖的两个文件<code>world.js</code>和<code>message.js</code>的内容，那么它是怎么做到的呢，这就需要用到 babel 来实现了， 接下来我们一步步来实现</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// webpackBootstrap</span></span><br><span class="line"><span class="meta">  &quot;use strict&quot;</span>;</span><br><span class="line">  <span class="keyword">var</span> __webpack_modules__ = &#123;</span><br><span class="line">    <span class="string">&quot;./index.js&quot;</span>: (</span><br><span class="line">      __unused_webpack_module,</span><br><span class="line">      __webpack_exports__,</span><br><span class="line">      __webpack_require__</span><br><span class="line">    ) =&gt; &#123;</span><br><span class="line">      <span class="built_in">eval</span>(<span class="comment">/*....*/</span>);</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    <span class="string">&quot;./message.js&quot;</span>: (</span><br><span class="line">      __unused_webpack_module,</span><br><span class="line">      __webpack_exports__,</span><br><span class="line">      __webpack_require__</span><br><span class="line">    ) =&gt; &#123;</span><br><span class="line">      <span class="built_in">eval</span>(<span class="comment">/*....*/</span>);</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    <span class="string">&quot;./world.js&quot;</span>: (</span><br><span class="line">      __unused_webpack_module,</span><br><span class="line">      __webpack_exports__,</span><br><span class="line">      __webpack_require__</span><br><span class="line">    ) =&gt; &#123;</span><br><span class="line">      <span class="built_in">eval</span>(<span class="comment">/*....*/</span>);</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// The module cache</span></span><br><span class="line">  <span class="keyword">var</span> __webpack_module_cache__ = &#123;&#125;;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// The require function</span></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">__webpack_require__</span>(<span class="params">moduleId</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// Check if module is in cache</span></span><br><span class="line">    <span class="keyword">if</span> (__webpack_module_cache__[moduleId]) &#123;</span><br><span class="line">      <span class="keyword">return</span> __webpack_module_cache__[moduleId].exports;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Create a new module (and put it into the cache)</span></span><br><span class="line">    <span class="keyword">var</span> <span class="built_in">module</span> = (__webpack_module_cache__[moduleId] = &#123;</span><br><span class="line">      <span class="comment">// no module.id needed</span></span><br><span class="line">      <span class="comment">// no module.loaded needed</span></span><br><span class="line">      <span class="built_in">exports</span>: &#123;&#125;,</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Execute the module function</span></span><br><span class="line">    __webpack_modules__[moduleId](<span class="built_in">module</span>, <span class="built_in">module</span>.exports, __webpack_require__);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Return the exports of the module</span></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">module</span>.exports;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* webpack/runtime/define property getters */</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">/* webpack/runtime/hasOwnProperty shorthand */</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">/* webpack/runtime/make namespace object */</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">/************************************************************************/</span></span><br><span class="line">  <span class="comment">// startup</span></span><br><span class="line">  <span class="comment">// Load entry module</span></span><br><span class="line">  __webpack_require__(<span class="string">&quot;./index.js&quot;</span>);</span><br><span class="line">  <span class="comment">// This entry module used &#x27;exports&#x27; so it can&#x27;t be inlined</span></span><br><span class="line">&#125;)();</span><br></pre></td></tr></table></figure>
+
+<h3 id="获取文件中的依赖模块和代码转换"><a href="#获取文件中的依赖模块和代码转换" class="headerlink" title="获取文件中的依赖模块和代码转换"></a>获取文件中的依赖模块和代码转换</h3><p>我们需要用到 babel 中的四的包</p>
+<p><code>@babel/core</code>: 将代码转成指定 ES 版本的代码</p>
+<p><code>@babel/parser</code>: 将代码转成 AST 抽象语法输</p>
+<p><code>@babel/traverse</code>: 是一个 AST 遍历工具，这里我们用他来遍历使用 import 的模块</p>
+<p><code>@babel/preset-env</code> : 这个是 babel 的默认的一些配置项</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 生成依赖和转义代码</span><br><span class="line">function generateDepsAndCode(filename)&#123;</span><br><span class="line">    const content &#x3D;  fs.readFileSync(filename, &#39;utf-8&#39;)</span><br><span class="line">    const ast &#x3D; parser.parse(content, &#123;</span><br><span class="line">        sourceType: &#39;module&#39;&#x2F;&#x2F;babel官方规定必须加这个参数，不然无法识别ES Module</span><br><span class="line">    &#125;)</span><br><span class="line">    const dependencies &#x3D; &#123;&#125;</span><br><span class="line">    &#x2F;&#x2F;遍历AST抽象语法树</span><br><span class="line">    traverse(ast, &#123;</span><br><span class="line">        &#x2F;&#x2F;获取通过import引入的模块</span><br><span class="line">        ImportDeclaration(&#123;node&#125;)&#123;</span><br><span class="line">            const dirname &#x3D; path.dirname(filename)</span><br><span class="line">            const newFile &#x3D; &#39;.&#x2F;&#39; + path.join(dirname, node.source.value)</span><br><span class="line">            &#x2F;&#x2F;保存所依赖的模块</span><br><span class="line">            dependencies[node.source.value] &#x3D; newFile</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;通过@babel&#x2F;core和@babel&#x2F;preset-env进行代码的转换</span><br><span class="line">    const &#123;code&#125; &#x3D; babel.transform(content, &#123;</span><br><span class="line">        presets: [&quot;@babel&#x2F;preset-env&quot;]</span><br><span class="line">    &#125;)</span><br><span class="line">    return &#123;</span><br><span class="line">        filename,&#x2F;&#x2F;该文件名</span><br><span class="line">        dependencies,&#x2F;&#x2F;该文件所依赖的模块集合(键值对存储)</span><br><span class="line">        code &#x2F;&#x2F;转换后的代码</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这一步我们就获得了<code>./index.js</code>文件的依赖文件是 <code>./message.js</code>,而且我们 import 的代码被转成了 require 了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  filename: &#39;.&#x2F;index.js&#39;,</span><br><span class="line">  dependencies: &#123; &#39;.&#x2F;message.js&#39;: &#39;.&#x2F;message.js&#39; &#125;,</span><br><span class="line">  code: &#39;&quot;use strict&quot;;\n&#39; +</span><br><span class="line">    &#39;\n&#39; +</span><br><span class="line">    &#39;var _message &#x3D; require(&quot;.&#x2F;message.js&quot;);\n&#39; +</span><br><span class="line">    &#39;\n&#39; +</span><br><span class="line">    &#39;console.log(_message.message);&#39;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="递归遍历生成依赖图"><a href="#递归遍历生成依赖图" class="headerlink" title="递归遍历生成依赖图"></a>递归遍历生成依赖图</h3><p>那么 message 中依赖的文件怎么读取呢，这就需要我们进行递归遍历了</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">generateGraphsByDeps</span>(<span class="params">deps</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> modules = [deps];</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; modules.length; i++) &#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="built_in">module</span> = modules[i].dependencies;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> m <span class="keyword">in</span> <span class="built_in">module</span>) &#123;</span><br><span class="line">      <span class="keyword">const</span> exits = modules.find(<span class="function">(<span class="params">m</span>) =&gt;</span> m.filename === <span class="built_in">module</span>[m]);</span><br><span class="line">      <span class="keyword">if</span> (!exits) &#123;</span><br><span class="line">        modules.push(generateDepsAndCode(<span class="built_in">module</span>[m])); <span class="comment">// 递归</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> graphs = &#123;&#125;;</span><br><span class="line"></span><br><span class="line">  modules.forEach(<span class="function">(<span class="params"><span class="built_in">module</span></span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> key = <span class="built_in">module</span>.filename;</span><br><span class="line">    graphs[key] = &#123;</span><br><span class="line">      dependencies: <span class="built_in">module</span>.dependencies,</span><br><span class="line">      code: <span class="built_in">module</span>.code,</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> graphs;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>生成的结果：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;./index.js&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;dependencies&quot;</span>: &#123; <span class="attr">&quot;./message.js&quot;</span>: <span class="string">&quot;./message.js&quot;</span> &#125;,</span><br><span class="line">    <span class="attr">&quot;code&quot;</span>:</span><br><span class="line">      <span class="string">&quot;\&quot;use strict\&quot;;\n&quot;</span> +</span><br><span class="line">      <span class="string">&quot;\n&quot;</span> +</span><br><span class="line">      <span class="string">&quot;var _message = require(\&quot;./message.js\&quot;);\n&quot;</span> +</span><br><span class="line">      <span class="string">&quot;\n&quot;</span> +</span><br><span class="line">      <span class="string">&quot;console.log(_message.message);&quot;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;./message.js&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;dependencies&quot;</span>: &#123; <span class="attr">&quot;./world.js&quot;</span>: <span class="string">&quot;./world.js&quot;</span> &#125;,</span><br><span class="line">    <span class="attr">&quot;code&quot;</span>:</span><br><span class="line">      <span class="string">&quot;\&quot;use strict\&quot;;\n&quot;</span> +</span><br><span class="line">      <span class="string">&quot;\n&quot;</span> +</span><br><span class="line">      <span class="string">&quot;Object.defineProperty(exports, \&quot;__esModule\&quot;, &#123;\n&quot;</span> +</span><br><span class="line">      <span class="string">&quot;  value: true\n&quot;</span> +</span><br><span class="line">      <span class="string">&quot;&#125;);\n&quot;</span> +</span><br><span class="line">      <span class="string">&quot;exports.message = void 0;\n&quot;</span> +</span><br><span class="line">      <span class="string">&quot;\n&quot;</span> +</span><br><span class="line">      <span class="string">&quot;var _world = require(\&quot;./world.js\&quot;);\n&quot;</span> +</span><br><span class="line">      <span class="string">&quot;\n&quot;</span> +</span><br><span class="line">      <span class="string">&quot;var message = \&quot;hello \&quot;.concat(_world.world);\n&quot;</span> +</span><br><span class="line">      <span class="string">&quot;exports.message = message;&quot;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;./world.js&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;dependencies&quot;</span>: &#123;&#125;,</span><br><span class="line">    <span class="attr">&quot;code&quot;</span>:</span><br><span class="line">      <span class="string">&quot;\&quot;use strict\&quot;;\n&quot;</span> +</span><br><span class="line">      <span class="string">&quot;\n&quot;</span> +</span><br><span class="line">      <span class="string">&quot;Object.defineProperty(exports, \&quot;__esModule\&quot;, &#123;\n&quot;</span> +</span><br><span class="line">      <span class="string">&quot;  value: true\n&quot;</span> +</span><br><span class="line">      <span class="string">&quot;&#125;);\n&quot;</span> +</span><br><span class="line">      <span class="string">&quot;exports.world = void 0;\n&quot;</span> +</span><br><span class="line">      <span class="string">&quot;var world = &#x27;world&#x27;;\n&quot;</span> +</span><br><span class="line">      <span class="string">&quot;exports.world = world;&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这下我们就拥有了所有文件的依赖图了，这而且你会发现，我们 exports 出来的模块被存在了一个 exports 对象想。这个依赖图对应的就是<code>__webpack_modules__</code></p>
+<h3 id="require-函数"><a href="#require-函数" class="headerlink" title="require 函数"></a>require 函数</h3><p>接下来我们只要写个 require，然后去执行 code 中的代码，那么上面的代码就可以跑通了。这里其实 require 函数的本质是执行一个模块的代码，然后将相应变量挂载到 exports 对象上</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">require</span>(<span class="params"><span class="built_in">module</span>, code</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> <span class="built_in">exports</span> = &#123;&#125;;</span><br><span class="line">  (<span class="function"><span class="keyword">function</span> (<span class="params"><span class="built_in">exports</span>, code</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">eval</span>(code);</span><br><span class="line">  &#125;)(<span class="built_in">exports</span>, code);</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">exports</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们来像 webpack 一样写一个立即函数，然后 require 一个入口文件</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">generateDistByGraphs</span>(<span class="params">entry, graphs</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="string">`</span></span><br><span class="line"><span class="string">        (function(graph) &#123;</span></span><br><span class="line"><span class="string">            //require函数的本质是执行一个模块的代码，然后将相应变量挂载到exports对象上</span></span><br><span class="line"><span class="string">            function require(module) &#123;</span></span><br><span class="line"><span class="string">                var exports = &#123;&#125;;</span></span><br><span class="line"><span class="string">                (function(exports, code) &#123;</span></span><br><span class="line"><span class="string">                    eval(code);</span></span><br><span class="line"><span class="string">                &#125;)(exports, graph[module].code);</span></span><br><span class="line"><span class="string">                return exports;</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">            require(&#x27;<span class="subst">$&#123;entry&#125;</span>&#x27;)</span></span><br><span class="line"><span class="string">        &#125;)(<span class="subst">$&#123;<span class="built_in">JSON</span>.stringify(graphs)&#125;</span>)`</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">build</span>(<span class="params">entry, dist</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> deps = generateDepsAndCode(entry);</span><br><span class="line">  <span class="keyword">const</span> graphs = generateGraphsByDeps(deps);</span><br><span class="line">  <span class="built_in">console</span>.log(graphs);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> code = generateDistByGraphs(entry, graphs);</span><br><span class="line">  fs.writeFileSync(dist, code); <span class="comment">// 将生成的代码写入dist文件</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">build(<span class="string">&quot;./index.js&quot;</span>, <span class="string">&quot;./dist.js&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>你可以试试将打包出来的 dist 放到浏览器中执行以下看是否能正确的输出<code>hello world</code></p>
+<p>至此我们就完成了一个简单的 mini-webpack，可以打包多个 js 文件了，虽然离真正的 webpack 还差很远，loader、plugins，这些我们都没有，但是通过这个 mini-webpack，相信你至少能清晰的知道 webpack 内部是怎么构建依赖图，怎么将多个模块文件打包再一起了。</p>
+
+  </div>
+</article>
+
+
+
+      
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2019-2021
+    Toad
+  </div>
+  
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
